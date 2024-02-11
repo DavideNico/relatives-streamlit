@@ -1,0 +1,26 @@
+credentials:
+  usernames:
+    salvatore:
+      email: nicolinisalvatore@live.it
+      logged_in: False # Will be managed automatically
+      name: Salvatore Nicolini
+      password: salvatore # Will be hashed automatically
+    giuseppe:
+      email: geis.valgeis@gmail.com
+      logged_in: False # Will be managed automatically
+      name: Giuseppe Nicolini
+      password: giuseppe # Will be hashed automatically
+    davide:
+      email: davide.nicolini91@gmail.com
+      logged_in: False # Will be managed automatically
+      name: Davide Nicolini
+      password: davide # Will be hashed automatically
+cookie:
+  expiry_days: 30
+  key: pinaponaspazzolona # Must be string
+  name: streamlit_pino
+preauthorized:
+  emails:
+  - davide.nicolini91@gmail.com
+  - nicolinisalvatore@live.it
+  - geis.valgeis@gmail.com
