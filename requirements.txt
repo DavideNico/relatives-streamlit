@@ -4,7 +4,6 @@ pandas
 pydeck
 streamlit
 duckdb
-os
 re
 time
 datetime
