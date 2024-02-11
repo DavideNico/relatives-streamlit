@@ -10,8 +10,5 @@ time
 datetime
 sqlalchemy
 requests
-bs4
 pickle
-io
-urllib
 streamlit
