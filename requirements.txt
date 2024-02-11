@@ -4,9 +4,6 @@ pandas
 pydeck
 streamlit
 duckdb
-re
-time
-datetime
 sqlalchemy
 requests
 pickle
