@@ -25,6 +25,7 @@ def run():
     st.set_page_config(
         page_title="Albero Genealogico",
         page_icon="👋",
+        layout="wide",
     )    
     with open('config.yaml') as file:
         config = yaml.load(file, Loader=SafeLoader)
