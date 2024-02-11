@@ -6,3 +6,4 @@ streamlit
 duckdb
 sqlalchemy
 requests
+streamlit_authenticator
