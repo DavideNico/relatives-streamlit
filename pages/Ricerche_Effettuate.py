@@ -7,7 +7,7 @@ import duckdb
 import pandas as pd
 from datetime import datetime
 import re
-
+import base64
 
 
 
@@ -21,6 +21,21 @@ def make_clickable(link):
                             # extract clickable text to display for your link
                             text = link.split('=')[1]
                             return f'<a target="_blank" href="{link}">{text}</a>'
+
+
+def download_db_file():
+    """
+    Function to prepare the .db file for download.
+    """
+    # Assuming your .db file name is 'example.db'
+    db_file_path = 'searches.db'
+    with open(db_file_path, 'rb') as f:
+        db_file_data = f.read()
+    b64_data = base64.b64encode(db_file_data).decode('utf-8')
+    href = f'<a href="data:application/octet-stream;base64,{b64_data}" download="searches.db">Download .db file</a>'
+    st.markdown(href, unsafe_allow_html=True)
+
+# Add a button to trigger the download
 
 def run_query(query,read_only=False):
     con=duckdb.connect('searches.db',read_only=read_only)
@@ -55,7 +70,7 @@ if st.session_state["authentication_status"]:
         
         datafr_cont=st.container(border=True)
         datafr_cont.title("Interfaccia per inserimento ricerche")
-        datafr_cont.subheader('''Qui puoi inserire i cognomi che ricerchiamo.''')
+        datafr_cont.subheader('''Qui puoi inserire i cognomi che ricerchiamo.''',divider='rainbow')
         datafr_cont.markdown('''
                              1. Seleziona i filtri a sinistra
                              2. Clicca il link al documento e cerca i Cognomi
@@ -200,7 +215,9 @@ if st.session_state["authentication_status"]:
             except Exception as e:
                 st.write(f'something went wrong: {e}')
                 con.close()       
-
+        st.divider()
+        if st.button("Download .db file"):
+            download_db_file()
 elif st.session_state["authentication_status"] is False:
         st.error('Username/password is incorrect')
 elif st.session_state["authentication_status"] is None:
