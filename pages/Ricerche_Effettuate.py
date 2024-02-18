@@ -6,6 +6,7 @@ from yaml.loader import SafeLoader
 import duckdb
 import pandas as pd
 from datetime import datetime
+import re
 
 
 
@@ -113,69 +114,64 @@ if st.session_state["authentication_status"]:
                           col1.header('Nome')
                           col2.header('Link alla pagina')
 
-                          for k,v in d_name.items():
+                          for i, (name_key, link_key) in enumerate(zip(d_name.keys(), d_link.keys())):
                             with col1:                                                                
-                                    d_name[k]=st.text_input(k,v)
+                                d_name[name_key] = st.text_input(name_key, d_name[name_key])
 
-                          for k,v in d_link.items():
                             with col2:
-                                    d_link[k]=st.text_input(k,v)
+                                d_link[link_key] = st.text_input(link_key, d_link[link_key])
                           
-                            if st.button(':face_with_monocle: Salva la ricerca'):
-                                link_str=' | '.join(d_link.values())
-                                nomi_str='|'.join(d_name.values())
-                                if (link_str.replace('|','').replace(' ','')=='') or ((nomi_str.replace('|','').replace(' ','')=='')):
-                                        st.error('Per favore inserisci tutti i valori prima di cliccare', icon='🚫')
-                                else:
-                                        output=Archivio_df                                    
-                                        output['COGNOME']=cognome
-                                        output['DATA_RICERCA']=datetime.now().strftime("%Y%m%d")
-                                        output['UTENTE']=st.session_state["name"]
-                                        output['PERSONE_TROVATE']=number_of_person_found
-                                        output['LINK_ALLE_PAGINE']=link_str
-                                        output['NOME_TROVATO']=nomi_str
-                                        #st.dataframe(output)
-                                        try:
-                                            con=duckdb.connect('searches.db')
-                                            col=list(con.sql('''SELECT * FROM SEARCHES''' ).df().columns)
-                                            col=','.join(col)
-                                            con.sql(f'''INSERT INTO SEARCHES ({col}) select {col} from output ''' )
-                                            con.close()
-                                            st.balloons()
-                                        except Exception as e:
-                                            st.write(f'something went wrong: {e}')
-                                            con.close()
+                          if st.button(':face_with_monocle: Salva la ricerca', key=1):
+                            link_pattern = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
+                            link_list_checked=[bool(link_pattern.match(value)) for value in d_link.values()]
+                            link_str=' | '.join(d_link.values())
+                            nomi_str='|'.join(d_name.values())
+                            if (link_str.replace('|','').replace(' ','')=='') or (nomi_str.replace('|','').replace(' ','')=='') :
+                                st.error('Per favore inserisci tutti i valori prima di cliccare', icon='🚫')
+                            elif any(value == False for value in link_list_checked):
+                                st.error('Uno o piú link che hai inserito non sono corretti.', icon='🚫')
+                            else:
+                                    output=Archivio_df                                    
+                                    output['COGNOME']=cognome
+                                    output['DATA_RICERCA']=datetime.now().strftime("%Y%m%d")
+                                    output['UTENTE']=st.session_state["name"]
+                                    output['PERSONE_TROVATE']=number_of_person_found
+                                    output['LINK_ALLE_PAGINE']=link_str
+                                    output['NOME_TROVATO']=nomi_str
+                                    #st.dataframe(output)
+                                    try:
+                                        con=duckdb.connect('searches.db')
+                                        col=list(con.sql('''SELECT * FROM SEARCHES''' ).df().columns)
+                                        col=','.join(col)
+                                        con.sql(f'''INSERT INTO SEARCHES ({col}) select {col} from output ''' )
+                                        con.close()
+                                        st.balloons()
+                                    except Exception as e:
+                                        st.write(f'something went wrong: {e}')
+                                        con.close()
                     elif number_of_person_found==0:
-                          if st.button(':face_with_monocle: Salva la ricerca'):
-                                link_str=''
-                                nomi_str=''
-                                output=Archivio_df                                    
-                                output['COGNOME']=cognome
-                                output['DATA_RICERCA']=datetime.now().strftime("%Y-%m-%d")
-                                output['UTENTE']=st.session_state["name"]
-                                output['PERSONE_TROVATE']=number_of_person_found
-                                output['LINK_ALLE_PAGINE']=link_str
-                                output['NOME_TROVATO']=nomi_str
-                                #st.dataframe(output)
-                                try:
-                                    con=duckdb.connect('searches.db')
-                                    col=list(con.sql('''SELECT * FROM SEARCHES''' ).df().columns)
-                                    col=','.join(col)
-                                    con.sql(f'''INSERT INTO SEARCHES ({col}) select {col} from output ''' )
-                                    con.close()
-                                    st.balloons()
-                                except Exception as e:
-                                    st.write(f'something went wrong: {e}')
-                                    con.close()
-
+                        if st.button(':face_with_monocle: Salva la ricerca',key=2):
+                            link_str=''
+                            nomi_str=''
+                            output=Archivio_df                                    
+                            output['COGNOME']=cognome
+                            output['DATA_RICERCA']=datetime.now().strftime("%Y-%m-%d")
+                            output['UTENTE']=st.session_state["name"]
+                            output['PERSONE_TROVATE']=number_of_person_found
+                            output['LINK_ALLE_PAGINE']=link_str
+                            output['NOME_TROVATO']=nomi_str
+                            #st.dataframe(output)
+                            try:
+                                con=duckdb.connect('searches.db')
+                                col=list(con.sql('''SELECT * FROM SEARCHES''' ).df().columns)
+                                col=','.join(col)
+                                con.sql(f'''INSERT INTO SEARCHES ({col}) select {col} from output ''' )
+                                con.close()
+                                st.balloons()
+                            except Exception as e:
+                                st.write(f'something went wrong: {e}')
+                                con.close()
                                 
-            
-
-
-                
-
-        
-
 elif st.session_state["authentication_status"] is False:
         st.error('Username/password is incorrect')
 elif st.session_state["authentication_status"] is None:
