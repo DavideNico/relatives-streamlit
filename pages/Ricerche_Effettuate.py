@@ -104,7 +104,7 @@ if st.session_state["authentication_status"]:
                             ''')
                 
                 if len(df_search)>0:
-                    cognome_cont.write('Nomi trovati nei seguenti registri:')
+                    datafr_cont.write('Nomi trovati nei seguenti registri:')
                     name_list=df_search['NOME_TROVATO'].str.split('|',expand=True)
                     link_list=df_search['LINK_ALLE_PAGINE'].str.split('|',expand=True)
                     existing_names=pd.concat([name_list.transpose(),link_list.transpose()],axis=1)
@@ -115,7 +115,7 @@ if st.session_state["authentication_status"]:
 
 
 
-                    cognome_cont.dataframe(existing_names,                     
+                    datafr_cont.dataframe(existing_names,                     
                         column_config={"Link alla pagina": st.column_config.LinkColumn("Link alla pagina")},
                         use_container_width=False,
                                        )
@@ -156,7 +156,7 @@ if st.session_state["authentication_status"]:
                             else:
                                     output=Archivio_df                                    
                                     output['COGNOME']=cognome
-                                    output['DATA_RICERCA']=datetime.now().strftime("%Y%m%d")
+                                    output['DATA_RICERCA']=datetime.now().strftime("%Y-%m-%d")
                                     output['UTENTE']=st.session_state["name"]
                                     output['PERSONE_TROVATE']=number_of_person_found
                                     output['LINK_ALLE_PAGINE']=link_str
@@ -198,10 +198,10 @@ if st.session_state["authentication_status"]:
         general_cognome_cont=st.container(border=True)
         general_cognome_cont.title('Ritrovamenti per Cognome')
         general_cognome_cont.subheader('Qui puoi inserire un cognome e vedere i documenti in cui é stato trovato', divider='rainbow')
-        col1,col2= general_cognome_cont.columns(2)
-        with col1:
+        col_1,col_2= general_cognome_cont.columns(2)
+        with col_1:
             cogn_ricerca=st.text_input(label='Inserisci il Cognome',key=3)
-        with col2:
+        with col_2:
             ricerca_gen_button=st.button('Clicca per cercare')
         if ricerca_gen_button:
             try:
