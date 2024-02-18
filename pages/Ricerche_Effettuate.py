@@ -44,11 +44,7 @@ if st.session_state["authentication_status"]:
         authenticator.logout()
         
         st.write(f'Benvenuto *{st.session_state["name"]}*')
-        st.write("# Le nostre ricerche ")
-        st.markdown(
-                    """Qui puoi trovare i cognomi che abbiamo giá ricercato. 
-                    Seleziona i filtri a sinistra per definire la ricerca
-        """)
+        
         Type=sorted(list(data.Tipologia.unique()))
         Year=sorted(list(data.Anno.unique()))
         Commune=sorted(list(data.Comune.unique()))
@@ -58,20 +54,32 @@ if st.session_state["authentication_status"]:
                 Comune = st.selectbox('Comune',Commune)        
         
         datafr_cont=st.container(border=True)
+        datafr_cont.title("Interfaccia per inserimento ricerche")
+        datafr_cont.subheader('''Qui puoi inserire i cognomi che ricerchiamo.''')
+        datafr_cont.markdown('''
+                             1. Seleziona i filtri a sinistra
+                             2. Clicca il link al documento e cerca i Cognomi
+                             3. Inserisci il Cognome che stai cercando e clicca invio
+                                (La prima lettera deve essere maiuscola -> Nicolini)
+                             4. Inserisci il numero di persone trovate
+                                a. Se 0 clicca su "Salva la ricerca"
+                                b. Se piú di 0 inserisci i nomi e il link alla pagina e poi clicca "Salva la ricerca"                                
+                             
+                             ''')
 
         Archivio_df=data[(data['Anno']==Anno)&(data['Comune']==Comune)&(data['Tipologia']==Tipologia)]
         if len(Archivio_df)==0:
             datafr_cont.info('Nessun risultato, seleziona altri filtri.', icon="🤖")
         else:
             datafr_cont.dataframe(Archivio_df,                     
-                     column_config={"Link": st.column_config.LinkColumn("Link al documento")},use_container_width=False,) 
+                     column_config={"Link": st.column_config.LinkColumn("Link al documento")
+                                    ,"Anno": st.column_config.NumberColumn("Link al documento",format="%d")},) 
         
-            cognome_cont=st.container(border=True)
             input_cont=st.container(border=True)
-            cognome=cognome_cont.text_input(label='Inserisci il Cognome')
+            cognome=datafr_cont.text_input(label='Inserisci il Cognome')
 
             if cognome=='':
-                cognome_cont.warning('Inserisci un cognome', icon="🚨")
+                datafr_cont.warning('Inserisci un cognome', icon="🚨")
             else:
                 df_search=run_query(f'''SELECT * FROM SEARCHES 
                             where UPPER(COGNOME) = TRIM(UPPER('{cognome}'))
@@ -97,8 +105,8 @@ if st.session_state["authentication_status"]:
                         use_container_width=False,
                                        )
                 else:
-                    cognome_cont.warning('Cognome non ricercato', icon="🔥")
-                    number_of_person_found=cognome_cont.number_input('Quante persone hai trovato?',min_value=0)
+                    datafr_cont.warning('Cognome non ricercato', icon="🔥")
+                    number_of_person_found=datafr_cont.number_input('Quante persone hai trovato?',min_value=0)
                     if number_of_person_found>0:
                           d_name={}
                           d_link={}
@@ -171,7 +179,28 @@ if st.session_state["authentication_status"]:
                             except Exception as e:
                                 st.write(f'something went wrong: {e}')
                                 con.close()
-                                
+        st.divider()
+        general_cognome_cont=st.container(border=True)
+        general_cognome_cont.title('Ritrovamenti per Cognome')
+        general_cognome_cont.subheader('Qui puoi inserire un cognome e vedere i documenti in cui é stato trovato', divider='rainbow')
+        col1,col2= general_cognome_cont.columns(2)
+        with col1:
+            cogn_ricerca=st.text_input(label='Inserisci il Cognome',key=3)
+        with col2:
+            ricerca_gen_button=st.button('Clicca per cercare')
+        if ricerca_gen_button:
+            try:
+                df_out=run_query(f'''SELECT * FROM SEARCHES 
+                                where UPPER(COGNOME) = TRIM(UPPER('{cogn_ricerca}'))
+                                order by Comune,Tipologia, Anno                        
+                                ''')  
+                general_cognome_cont.dataframe(df_out,                     
+                     column_config={"Link": st.column_config.LinkColumn("Link al documento")
+                                    ,"Anno": st.column_config.NumberColumn("Link al documento",format="%d") },)          
+            except Exception as e:
+                st.write(f'something went wrong: {e}')
+                con.close()       
+
 elif st.session_state["authentication_status"] is False:
         st.error('Username/password is incorrect')
 elif st.session_state["authentication_status"] is None:
