@@ -30,17 +30,17 @@ def run():
     with open('config.yaml') as file:
         config = yaml.load(file, Loader=SafeLoader)
 
-    authenticator = stauth.Authenticate(
-        config['credentials'],
-        config['cookie']['name'],
-        config['cookie']['key'],
-        config['cookie']['expiry_days'],
-        config['preauthorized']
-        )
-    authenticator.login()
-
+    #authenticator = stauth.Authenticate(
+    #    config['credentials'],
+    #    config['cookie']['name'],
+    #    config['cookie']['key'],
+    #    config['cookie']['expiry_days'],
+    #    config['preauthorized']
+    #    )
+    #authenticator.login()
+    st.session_state["authentication_status"]=True
     if st.session_state["authentication_status"]:
-        authenticator.logout()
+        #authenticator.logout()
         
         st.write(f'Welcome *{st.session_state["name"]}*')
         st.write("# Albero Genealogico! 👋")
