@@ -42,7 +42,7 @@ def run():
     if st.session_state["authentication_status"]:
         #authenticator.logout()
         
-        st.write(f'Welcome *{st.session_state["name"]}*')
+        #st.write(f'Welcome *{st.session_state["name"]}*')
         st.write("# Albero Genealogico! 👋")
 
         st.sidebar.success("Seleziona un menú qui sopra.")
