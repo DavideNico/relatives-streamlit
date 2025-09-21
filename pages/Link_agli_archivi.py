@@ -13,7 +13,7 @@
 # limitations under the License.
 import streamlit as st
 from streamlit.logger import get_logger
-import streamlit_authenticator as stauth
+#import streamlit_authenticator as stauth
 import yaml
 from yaml.loader import SafeLoader
 import duckdb
@@ -30,17 +30,17 @@ data = con.sql('''SELECT * FROM LINKS_TO_REGISTRY''').df()
 con.close()
 
 
-with open('config.yaml') as file:
-        config = yaml.load(file, Loader=SafeLoader)
-
-        authenticator = stauth.Authenticate(
-        config['credentials'],
-        config['cookie']['name'],
-        config['cookie']['key'],
-        config['cookie']['expiry_days'],
-        config['preauthorized']
-        )
-        authenticator.login()
+#with open('config.yaml') as file:
+#        config = yaml.load(file, Loader=SafeLoader)
+#
+#        authenticator = stauth.Authenticate(
+#        config['credentials'],
+#        config['cookie']['name'],
+#        config['cookie']['key'],
+#        config['cookie']['expiry_days'],
+#        config['preauthorized']
+#        )
+#        authenticator.login()
 
 if st.session_state["authentication_status"]:
         #authenticator.logout()

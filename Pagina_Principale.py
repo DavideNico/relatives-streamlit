@@ -14,7 +14,7 @@
 
 import streamlit as st
 from streamlit.logger import get_logger
-import streamlit_authenticator as stauth
+#import streamlit_authenticator as stauth
 import yaml
 from yaml.loader import SafeLoader
 
