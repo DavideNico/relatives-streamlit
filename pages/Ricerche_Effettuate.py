@@ -56,9 +56,9 @@ with open('config.yaml') as file:
         authenticator.login()
 
 if st.session_state["authentication_status"]:
-        authenticator.logout()
+        #authenticator.logout()
         
-        st.write(f'Benvenuto *{st.session_state["name"]}*')
+        #st.write(f'Benvenuto *{st.session_state["name"]}*')
         
         Type=sorted(list(data.Tipologia.unique()))
         Year=sorted(list(data.Anno.unique()))

@@ -43,9 +43,9 @@ with open('config.yaml') as file:
         authenticator.login()
 
 if st.session_state["authentication_status"]:
-        authenticator.logout()
+        #authenticator.logout()
         
-        st.write(f'Welcome *{st.session_state["name"]}*')
+        #st.write(f'Welcome *{st.session_state["name"]}*')
         st.write("# Lista dei link ai registri ")
         st.markdown(
                     """Qui puoi trovare i link ai registri.  
